@@ -9,38 +9,42 @@ const Home = () => {
 
     const [allGamesList, setAllGamesList] = useState([])
     const [gameGenreById, setGameGenreById] = useState([])
+    const [selectedGenreName, setSelectedGenreName] = useState('Action')
 
     useEffect(() => {
         GetAllGames()
-        GetGamesGenreById()
+        GetGamesGenreById(4)
     }, [])
 
     const GetAllGames = () => {
         GlobalAPI.getAllGames.then((res) => {
-            // console.log(res.data.results)
+            console.log(res.data.results)
             setAllGamesList(res.data.results)
-            setGameGenreById(res.data.results)
+            // setGameGenreById(res.data.results)
         })
     }
 
     const GetGamesGenreById = (id) => {
-        GlobalAPI.getGameListById(4).then((res) => {
-            console.log("game list by Id genres", res.data.results)
-            
+        // console.log("GENREID", id)
+        GlobalAPI.getGameListById(id).then((res) => {
+            // console.log("game list by Id genres", res.data.results)
+            setGameGenreById(res.data.results)
         })
     }
 
     return (
         <div className="grid grid-cols-4 px-8">
             <div className="hidden md:block">
-                <GenreList />
+                <GenreList genresId={(genresId) => GetGamesGenreById(genresId)}
+                selectedGenreName={(name) => setSelectedGenreName(name)}/>
             </div>
             <div className="col-span-4 md:col-span-3 p-4">
                 {allGamesList.length > 0 && gameGenreById.length >0 ?
                     <div>
                         <Banner gameBanner={allGamesList[0]} />
                         <Trending gameList={allGamesList} />
-                        <GamesByGenreId gameList={gameGenreById} />
+                        <GamesByGenreId gameList={gameGenreById} 
+                        selectedGenreName={selectedGenreName}/>
                     </div>
                     : null}
             </div>
